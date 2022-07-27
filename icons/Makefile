@@ -1,6 +1,7 @@
 all: icns
 
-icns: openrtp.icns
+openrtp.icsn: icns
+icns: openrtp.iconset
 	iconutil -c icns openrtp.iconset
 
 clean:
