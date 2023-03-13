@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# @file install_plugins
+# @brief Plugin installation script
+# @author Noriaki Ando <n-ando@aist.go.jp>
+#
+#------------------------------
+#
+# This script installs eclipse plugins into existing eclipse dir.
+#
+# install_plugins <eclipse dir>
+#
+# ** Environment variables
+#
+# - REPOSITORY: Plugin repository URL of eclipse update site.
+#
+# - PLUGINS: Plugins to be installed.
+#------------------------------
+
+
+# Eclipse plugins information
+true ${REPOSITORY:="https://download.eclipse.org/releases/2022-12"}
+true ${PLUGINS:="org.eclipse.emf.sdk.feature.group
+         org.eclipse.emf.ecore.xcore.sdk.feature.group
+         org.eclipse.gef.sdk.feature.group
+         org.eclipse.xsd.sdk.feature.group"}
+
+#------------------------------
+# functions
+#------------------------------
+
+#------------------------------------------------------------
+# find_equinox()
+#------------------------------------------------------------
+find_equinox()
+{
+    equinox=`ls $ECLIPSE_HOME/Contents/Eclipse/plugins/org.eclipse.equinox.launcher_*.jar`
+    for e in $equinox ; do
+        EQUINOX_LAUNCHER=$e
+        return 0
+    done
+    echo "Equinox Launcher jar file not found. Aborting."
+    exit 1
+}
+
+
+#------------------------------------------------------------
+# install_plugins
+#------------------------------------------------------------
+install_plugins()
+{
+    cmd="java -jar $EQUINOX_LAUNCHER"
+    app_opt="-application org.eclipse.equinox.p2.director"
+    dest_opt="-destination $ECLIPSE_HOME"
+    repo_opt="-repository $REPOSITORY"
+
+    for p in $PLUGINS ; do
+        echo "$cmd $app_opt $dest_opt $repo_opt -installIU $p"
+        $cmd $app_opt $dest_opt $repo_opt -installIU $p
+        if test $? -ne 0 ; then
+            echo "Plugin: $p installation failed. Aborting."
+            return 0
+        fi
+    done
+}
+
+
+#------------------------------
+# main
+#------------------------------
+export LC_ALL=C
+
+if test $# -ne 1 ; then
+    echo "Target eclipse dir is reuiqred."
+    echo "$0 <target eclipse dir>"
+    exit 1
+fi
+ECLIPSE_HOME=$1
+find_equinox
+install_plugins

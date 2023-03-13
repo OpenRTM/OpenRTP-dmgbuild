@@ -1,12 +1,12 @@
-DMG_JA=openrtp2-ja_v2.0.0.dmg
-DMG_EN=openrtp2-en_v2.0.0.dmg
+DMG_JA=openrtp2-ja_v2.0.1.dmg
+DMG_EN=openrtp2-en_v2.0.1.dmg
 APP_JA=OpenRTP2-ja.app
 APP_EN=OpenRTP2-en.app
 
 all: subdirs $(DMG_EN) $(DMG_JA)
 
 # subdirs build
-SUBDIRS = icons backImage
+SUBDIRS = bin icons backImage
 .PHONY: subdirs $(SUBDIRS)
 subdirs: $(SUBDIRS)
 $(SUBDIRS):

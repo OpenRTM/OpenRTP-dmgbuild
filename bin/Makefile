@@ -1,29 +1,22 @@
-all: cleanapp modifyapp
+all: build
 
-PKGFILE=eclipse473-openrtp122v20200828-macosx-cocoa-x86_64.tar.gz
-PKGURL=https://openrtm.org/pub/openrtp/packages/1.2.2.v20200828/
-APPDIR=OpenRTP2.app
-APPDIR_JA=OpenRTP2-ja.app
-APPDIR_EN=OpenRTP2-en.app
-RESRCDIR=$(APPDIR)/Contents/Resources
-INIFILE=$(APPDIR)/Contents/Eclipse/eclipse.ini
-PLISTFILE=$(APPDIR)/Contents/Info.plist
-CRSRCFILE=$(APPDIR)/Contents/_CodeSignature/CodeResources
-CONFIGDIR=$(APPDIR)/Contents/Eclipse/configuration
-P2DIR=$(APPDIR)/Contents/Eclipse/p2/org.eclipse.equinox.p2.engine
+ECLIPSE_ORG=eclipse-SDK-EMFGEF-4.16-macosx-cocoa-x86_64.tgz
+BABEL_FILE=BabelLanguagePack-eclipse-ja_4.16.0.v20201010073410_mac.zip
+OPENRTP_EN=openrtp-en-2.0.1.tar.gz
+OPENRTP_JA=openrtp-ja-2.0.1.tar.gz
+APP_DIR=Eclipse.app
+EN_APP=OpenRTP2-en.app
+JA_APP=OpenRTP2-ja.app
+CONFIGDIR=$(APP_DIR)/Contents/Eclipse/configuration
+P2DIR=$(APP__DIR)/Contents/Eclipse/p2/org.eclipse.equinox.p2.engine
 
-download:
-	wget -c $(PKGURL)/$(PKGFILE)
+build:
+	./create_openrtp.sh
 
-extract: download $(PKGFILE)
-	rm -rf Eclipse.app OpenRTP.app
-	tar xvzf $(PKGFILE)
-	mv Eclipse.app OpenRTP.app
-
-cleanapp: cleanapp-en cleanapp-en
+cleanapp: cleanapp-en cleanapp-ja
 cleanapp-ja:
-	rm -rf $(APPDIR)
-	ln -s $(APPDIR_JA) $(APPDIR)
+	rm -rf $(APP_DIR)
+	ln -s $(JA_APP) $(APP_DIR)
 	rm -rf $(APPDIR)/Contents/MacOS/logback.xml
 	rm -rf $(CONFIGDIR)/*.log
 	rm -rf $(CONFIGDIR)/.settings
@@ -35,12 +28,12 @@ cleanapp-ja:
 	rm -rf $(CONFIGDIR)/org.eclipse.e4.ui.css.swt.theme
 	rm -rf $(P2DIR)/.settings
 	rm -rf $(P2DIR)/profileRegistry/SDKProfile.profile/.data/.settings
-	rm $(APPDIR)
+	rm $(APP_DIR)
 
 cleanapp-en:
-	rm -rf $(APPDIR)
-	ln -s $(APPDIR_EN) $(APPDIR)
-	rm -rf $(APPDIR)/Contents/MacOS/logback.xml
+	rm -rf $(APP_DIR)
+	ln -s $(EN_APP) $(APP_DIR)
+	rm -rf $(APP_DIR)/Contents/MacOS/logback.xml
 	rm -rf $(CONFIGDIR)/*.log
 	rm -rf $(CONFIGDIR)/.settings
 	rm -rf $(CONFIGDIR)/org.eclipse.update/history
@@ -51,52 +44,11 @@ cleanapp-en:
 	rm -rf $(CONFIGDIR)/org.eclipse.e4.ui.css.swt.theme
 	rm -rf $(P2DIR)/.settings
 	rm -rf $(P2DIR)/profileRegistry/SDKProfile.profile/.data/.settings
-	rm $(APPDIR)
-
-modifyapp: modifyapp-en modifyapp-ja
-
-modifyapp-en:
-	rm -f $(APPDIR)
-	ln -s $(APPDIR_EN) $(APPDIR)
-	# copy icon
-	cp ../icons/openrtp.icns $(RESRCDIR)/OpenRTP.icns
-	# Modify ini file
-	mv $(INIFILE) $(INIFILE).org
-	echo "-vm" >> $(INIFILE)
-	echo "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin" >> $(INIFILE)
-	echo "-showLocation" >> $(INIFILE)
-	cat $(INIFILE).org >>  $(INIFILE)
-	rm -f $(INIFILE).org
-	# replace icon entry
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(INIFILE)
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(PLISTFILE)
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(CRSRCFILE)
-	rm $(APPDIR)
-
-modifyapp-ja:
-	rm -f $(APPDIR)
-	ln -s $(APPDIR_JA) $(APPDIR)
-	# copy icon
-	cp ../icons/openrtp.icns $(RESRCDIR)/OpenRTP.icns
-	# Modify ini file
-	mv $(INIFILE) $(INIFILE).org
-	echo "-vm" >> $(INIFILE)
-	echo "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin" >> $(INIFILE)
-	echo "-showLocation" >> $(INIFILE)
-	cat $(INIFILE).org >>  $(INIFILE)
-	rm -f $(INIFILE).org
-	# replace icon entry
-#	test -f $(INIFILE)   && sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(INIFILE)
-#	test -f $(PLISTFILE) && sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(PLISTFILE)
-#	test -f $(CRSRCFILE) && sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(CRSRCFILE)
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(INIFILE)
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(PLISTFILE)
-	sed -i '' 's/Eclipse.icns/OpenRTP.icns/g' $(CRSRCFILE)
-	rm $(APPDIR)
+	rm $(APP_DIR)
 
 clean:
 	rm -f .DS_store
 	rm -rf OpenRTP2.app Eclipse2.app
-
-cleantgz:
-	rm -rf $(PKGFILE)
+	rm -rf $(ECLIPSE_ORG)
+	rm -rf $(BABEL_FILE) $(OPENRTP_EN) $(OPENRTP_JA)
+	rm -rf $(APP_DIR) $(EN_APP) $(JA_APP)
