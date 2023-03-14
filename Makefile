@@ -38,9 +38,9 @@ $(DMG_JA): subdirs backImage.tiff
 		--icon "$(APP_JA)" 200 190 \
 		--hide-extension "$(APP_JA)" \
 		--app-drop-link 600 185 \
-		"$(DMG_JP)" \
+		"$(DMG_JA)" \
 		"bin/$(APP_JA)/"
-	shasum -a 256 $(DMG_JP)
+	shasum -a 256 $(DMG_JA)
 
 
 clean:
