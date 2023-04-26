@@ -66,7 +66,7 @@ modify_eclipseini()
     echo "Modifying eclipse.ini file"
     mv $INIFILE $INIFILE.org
     echo "-vm" >> $INIFILE
-    echo "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/bin" >> $INIFILE
+    echo "/Library/Java/JavaVirtualMachines/temurin-8.jdk/Contents/Home/bin" >> $INIFILE
     echo "-showLocation" >> $INIFILE
     cat $INIFILE.org >>  $INIFILE
     rm -f $INIFILE.org
